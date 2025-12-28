@@ -9,7 +9,7 @@ const { isDark, toggleTheme } = useTheme();
 const scrollY = ref(0);
 const mobileMenuOpen = ref(false);
 
-const navItems = ['Features', 'Awards', 'Events', 'About'];
+const navItems = ['Features', 'Awards', 'About'];
 
 const footerLinks = {
   platform: [
@@ -84,7 +84,7 @@ const navClasses = computed(() => {
             <a 
               v-for="item in navItems" 
               :key="item" 
-              :href="`#${item.toLowerCase()}`" 
+              :href="`/#${item.toLowerCase()}`" 
               :class="[
                 'text-sm font-medium transition-colors hover:text-brand-500 relative group', 
                 isDark ? 'text-slate-300' : 'text-slate-600'
@@ -109,22 +109,35 @@ const navClasses = computed(() => {
               <Moon v-else class="w-5 h-5" />
             </button>
             
-            <Link 
-              href="/login"
-              :class="[
-                'px-5 py-2 rounded-lg text-sm font-semibold transition-all', 
-                isDark ? 'text-slate-200 hover:bg-slate-800' : 'text-slate-700 hover:bg-slate-100'
-              ]"
-            >
-              Log In
-            </Link>
-            
-            <Link 
-              href="/register"
-              class="px-5 py-2 bg-brand-600 text-white rounded-lg text-sm font-semibold shadow-lg shadow-brand-600/20 hover:bg-brand-700 hover:shadow-brand-600/40 transition-all transform hover:-translate-y-0.5"
-            >
-              Get Started
-            </Link>
+            <template v-if="$page.props.auth.user">
+                <Link 
+                  href="/dashboard"
+                  :class="[
+                    'px-5 py-2 rounded-lg text-sm font-semibold transition-all', 
+                    isDark ? 'text-slate-200 hover:bg-slate-800' : 'text-slate-700 hover:bg-slate-100'
+                  ]"
+                >
+                  Dashboard
+                </Link>
+            </template>
+            <template v-else>
+                <Link 
+                  href="/login"
+                  :class="[
+                    'px-5 py-2 rounded-lg text-sm font-semibold transition-all', 
+                    isDark ? 'text-slate-200 hover:bg-slate-800' : 'text-slate-700 hover:bg-slate-100'
+                  ]"
+                >
+                  Log In
+                </Link>
+                
+                <Link 
+                  href="/register"
+                  class="px-5 py-2 bg-brand-600 text-white rounded-lg text-sm font-semibold shadow-lg shadow-brand-600/20 hover:bg-brand-700 hover:shadow-brand-600/40 transition-all transform hover:-translate-y-0.5"
+                >
+                  Get Started
+                </Link>
+            </template>
           </div>
 
           <!-- Mobile Toggle -->
@@ -157,7 +170,7 @@ const navClasses = computed(() => {
           <a 
             v-for="item in navItems" 
             :key="item" 
-            :href="`#${item.toLowerCase()}`"
+            :href="`/#${item.toLowerCase()}`"
             :class="['block font-medium text-lg', isDark ? 'text-slate-200' : 'text-slate-800']"
             @click="mobileMenuOpen = false"
           >
@@ -181,23 +194,37 @@ const navClasses = computed(() => {
           </div>
 
           <div class="grid grid-cols-2 gap-4 mt-4">
-            <Link 
-              href="/login"
-              :class="[
-                'block w-full py-3 rounded-lg text-center font-semibold border',
-                isDark ? 'border-slate-700 text-slate-200' : 'border-slate-200 text-slate-700'
-              ]"
-              @click="mobileMenuOpen = false"
-            >
-              Log In
-            </Link>
-            <Link 
-              href="/register"
-              class="block w-full py-3 rounded-lg text-center font-bold bg-brand-600 text-white shadow-lg"
-              @click="mobileMenuOpen = false"
-            >
-              Get Started
-            </Link>
+            <template v-if="$page.props.auth.user">
+                <Link 
+                  href="/dashboard"
+                  :class="[
+                    'col-span-2 block w-full py-3 rounded-lg text-center font-semibold border',
+                    isDark ? 'border-slate-700 text-slate-200' : 'border-slate-200 text-slate-700'
+                  ]"
+                  @click="mobileMenuOpen = false"
+                >
+                  Dashboard
+                </Link>
+            </template>
+            <template v-else>
+                <Link 
+                  href="/login"
+                  :class="[
+                    'block w-full py-3 rounded-lg text-center font-semibold border',
+                    isDark ? 'border-slate-700 text-slate-200' : 'border-slate-200 text-slate-700'
+                  ]"
+                  @click="mobileMenuOpen = false"
+                >
+                  Log In
+                </Link>
+                <Link 
+                  href="/register"
+                  class="block w-full py-3 rounded-lg text-center font-bold bg-brand-600 text-white shadow-lg"
+                  @click="mobileMenuOpen = false"
+                >
+                  Get Started
+                </Link>
+            </template>
           </div>
         </div>
       </transition>
@@ -219,8 +246,8 @@ const navClasses = computed(() => {
           <!-- Brand -->
           <div class="col-span-1 lg:col-span-1">
             <div class="flex items-center space-x-2 mb-6">
-              <div class="w-10 h-10 bg-gradient-to-br from-brand-600 to-brand-800 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg">
-                G
+              <div class="w-10 h-10 bg-gradient-to-br from-brand-600 to-brand-800 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg overflow-hidden">
+                <img :src="logo" alt="Gamji" class="w-full h-full object-cover">
               </div>
               <span class="text-2xl font-bold text-white font-display">GAMJI</span>
             </div>

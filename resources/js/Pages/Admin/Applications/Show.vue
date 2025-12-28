@@ -22,7 +22,8 @@ const statusColors = {
     pending: 'warning',
     approved: 'success',
     rejected: 'danger',
-    under_review: 'info'
+    under_review: 'info',
+    shortlisted: 'default'
 };
 
 const formatDate = (date) => {
@@ -31,9 +32,23 @@ const formatDate = (date) => {
     });
 };
 
+const getFileName = (path) => {
+    return path.split('/').pop();
+};
+
+const getFileUrl = (path) => {
+    return `/storage/${path}`;
+};
+
 const approve = () => {
     if (confirm('Approve this application?')) {
         router.patch(route('admin.applications.approve', props.application.id));
+    }
+};
+
+const shortlist = () => {
+    if (confirm('Shortlist this application?')) {
+        router.patch(route('admin.applications.shortlist', props.application.id));
     }
 };
 
@@ -57,6 +72,7 @@ const reject = () => {
                     <Badge :variant="statusColors[application.application_status] || 'default'" class="flex items-center gap-1">
                         <CheckCircle v-if="application.application_status === 'approved'" class="w-3 h-3" />
                         <XCircle v-else-if="application.application_status === 'rejected'" class="w-3 h-3" />
+                        <CheckCircle v-else-if="application.application_status === 'shortlisted'" class="w-3 h-3" />
                         <Clock v-else class="w-3 h-3" />
                         {{ application.application_status }}
                     </Badge>
@@ -70,10 +86,22 @@ const reject = () => {
             </div>
             
             <div v-if="application.application_status === 'pending'" class="flex items-center gap-3">
+                <button @click="shortlist" :class="['btn-secondary', isDark? 'bg-brand-900/40 text-brand-400 border-brand-800 hover:bg-brand-900/60' : 'bg-white border-brand-200 text-brand-700 hover:bg-brand-50']">
+                    <CheckCircle class="w-5 h-5 opacity-50" style="color:currentColor" /> Shortlist
+                </button>
                 <button @click="approve" class="btn-primary">
                     <CheckCircle class="w-5 h-5" /> Approve
                 </button>
                 <button @click="reject" :class="['px-4 py-2 rounded-xl font-semibold transition-colors', isDark ? 'bg-red-900/30 text-red-400' : 'bg-red-50 text-red-600 hover:bg-red-100']">
+                    <XCircle class="w-5 h-5 inline mr-1" /> Reject
+                </button>
+            </div>
+            
+            <div v-else-if="application.application_status === 'shortlisted'" class="flex items-center gap-3">
+                 <button @click="approve" class="btn-primary">
+                    <CheckCircle class="w-5 h-5" /> Approve Selected
+                </button>
+                 <button @click="reject" :class="['px-4 py-2 rounded-xl font-semibold transition-colors', isDark ? 'bg-red-900/30 text-red-400' : 'bg-red-50 text-red-600 hover:bg-red-100']">
                     <XCircle class="w-5 h-5 inline mr-1" /> Reject
                 </button>
             </div>
@@ -116,9 +144,33 @@ const reject = () => {
                     <h2 :class="['text-lg font-semibold mb-4 flex items-center gap-2', isDark ? 'text-white' : 'text-slate-900']">
                         <FileText class="w-5 h-5 text-brand-500" /> Supporting Documents
                     </h2>
-                    <p :class="['whitespace-pre-wrap', isDark ? 'text-slate-300' : 'text-slate-600']">
+                    <p v-if="application.supporting_documents" :class="['whitespace-pre-wrap mb-4', isDark ? 'text-slate-300' : 'text-slate-600']">
                         {{ application.supporting_documents }}
                     </p>
+
+                    <div v-if="application.applicant?.documents?.length" class="space-y-3">
+                        <div v-for="doc in application.applicant.documents" :key="doc.id" 
+                            :class="['flex items-center justify-between p-3 rounded-lg border', isDark ? 'bg-slate-700/50 border-slate-600' : 'bg-slate-50 border-slate-200']">
+                            <div class="flex items-center gap-3">
+                                <FileText class="w-5 h-5 text-brand-500" />
+                                <div>
+                                    <p :class="['font-medium text-sm capitalize', isDark ? 'text-white' : 'text-slate-900']">
+                                        {{ doc.type }} Result
+                                    </p>
+                                    <p :class="['text-xs truncate max-w-[200px]', isDark ? 'text-slate-400' : 'text-slate-500']">
+                                        {{ getFileName(doc.file_path) }}
+                                    </p>
+                                </div>
+                            </div>
+                            <a :href="getFileUrl(doc.file_path)" target="_blank" 
+                                :class="['text-sm font-medium hover:underline', isDark ? 'text-brand-400' : 'text-brand-600']">
+                                Download
+                            </a>
+                        </div>
+                    </div>
+                    <div v-else-if="!application.supporting_documents && !application.applicant?.documents?.length">
+                         <p :class="[isDark ? 'text-slate-400' : 'text-slate-500']">No documents available.</p>
+                    </div>
                 </div>
 
                 <!-- Admin Notes -->

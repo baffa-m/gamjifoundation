@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Application extends Model
 {
+    use HasFactory;
     protected $fillable = [
         'applicant_id',
         'award_id',
@@ -36,6 +38,11 @@ class Application extends Model
     public function scopeUnderReview($query)
     {
         return $query->where('application_status', 'under_review');
+    }
+
+    public function scopeShortlisted($query)
+    {
+        return $query->where('application_status', 'shortlisted');
     }
 
     public function scopeApproved($query)

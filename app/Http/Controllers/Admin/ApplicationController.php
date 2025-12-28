@@ -38,7 +38,7 @@ class ApplicationController extends Controller
     public function show(Application $application)
     {
         return Inertia::render('Admin/Applications/Show', [
-            'application' => $application->load(['applicant.user', 'award.sponsor'])
+            'application' => $application->load(['applicant.user', 'applicant.documents', 'award.sponsor'])
         ]);
     }
 
@@ -54,6 +54,20 @@ class ApplicationController extends Controller
         ]);
 
         return back()->with('success', 'Application marked as under review.');
+    }
+
+    public function shortlist(Request $request, Application $application)
+    {
+        $validated = $request->validate([
+            'admin_notes' => 'nullable|string'
+        ]);
+
+        $application->update([
+            'application_status' => 'shortlisted',
+            'admin_notes' => $validated['admin_notes'] ?? null
+        ]);
+
+        return back()->with('success', 'Application has been shortlisted.');
     }
 
     public function approve(Request $request, Application $application)

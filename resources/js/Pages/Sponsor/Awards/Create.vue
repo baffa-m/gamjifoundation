@@ -31,10 +31,7 @@ const form = useForm({
 const categories = [
     { value: 'jamb', label: 'JAMB', emoji: '📚' },
     { value: 'waec', label: 'WAEC', emoji: '📝' },
-    { value: 'general', label: 'General', emoji: '🎓' },
-    { value: 'stem', label: 'STEM', emoji: '🔬' },
-    { value: 'arts', label: 'Arts', emoji: '🎨' },
-    { value: 'sports', label: 'Sports', emoji: '⚽' }
+    { value: 'general', label: 'General', emoji: '🎓' }
 ];
 
 const imagePreview = ref(null);

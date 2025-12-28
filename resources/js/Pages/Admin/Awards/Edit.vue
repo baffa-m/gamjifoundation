@@ -38,10 +38,7 @@ const form = useForm({
 const categories = [
     { value: 'jamb', label: 'JAMB', emoji: '📚' },
     { value: 'waec', label: 'WAEC', emoji: '📝' },
-    { value: 'general', label: 'General', emoji: '🎓' },
-    { value: 'stem', label: 'STEM', emoji: '🔬' },
-    { value: 'arts', label: 'Arts', emoji: '🎨' },
-    { value: 'sports', label: 'Sports', emoji: '⚽' }
+    { value: 'general', label: 'General', emoji: '🎓' }
 ];
 
 const statuses = [
@@ -65,7 +62,7 @@ const addCriteria = () => form.eligibility_criteria.push('');
 const removeCriteria = (index) => form.eligibility_criteria.splice(index, 1);
 
 const submit = () => {
-    form.post(route('admin.awards.update', props.award.id), { _method: 'PUT' });
+    form.put(route('admin.awards.update', props.award.id));
 };
 </script>
 

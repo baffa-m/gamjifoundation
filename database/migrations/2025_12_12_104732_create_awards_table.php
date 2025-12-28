@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('required_documents')->nullable();
             $table->decimal('amount', 12, 2);
             $table->integer('number_of_awards')->default(1);
-            $table->enum('category', ['jamb', 'waec', 'general', 'stem', 'arts', 'sports']);
+            $table->enum('category', ['jamb', 'waec', 'general']);
             $table->json('eligibility_criteria')->nullable(); // Store as JSON
             $table->date('application_start_date');
             $table->date('application_end_date');

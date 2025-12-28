@@ -1,7 +1,15 @@
+```
 <script setup>
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import { User, Mail, Lock, Eye, EyeOff, Check, ArrowRight, Sparkles } from 'lucide-vue-next';
+import { useTheme } from '@/Composables/useTheme';
+import Checkbox from '@/Components/Checkbox.vue';
+import TextInput from '@/Components/TextInput.vue';
+
+import logo from '@/../images/logo.jpeg';
+
+const { isDark } = useTheme();
 
 const form = useForm({
     name: '',
@@ -63,7 +71,7 @@ const passwordStrengthText = (strength) => {
 <template>
     <Head title="Create Account - GAMJI Foundation" />
 
-    <div class="min-h-screen auth-page-bg flex">
+    <div :class="['min-h-screen flex transition-colors duration-500', isDark ? 'bg-slate-950' : 'auth-page-bg']">
         <!-- Left Side - Hero -->
         <div class="hidden lg:flex lg:flex-1 bg-gradient-to-br from-brand-600 via-brand-700 to-brand-900 relative overflow-hidden">
             <!-- Animated Background -->
@@ -124,38 +132,36 @@ const passwordStrengthText = (strength) => {
                 <Link href="/" class="lg:hidden inline-flex items-center gap-3 mb-8 group animate-fade-in">
                     <div class="relative">
                         <div class="absolute inset-0 bg-brand-500 rounded-2xl blur-xl opacity-50"></div>
-                        <div class="relative w-12 h-12 bg-gradient-to-br from-brand-500 to-brand-600 rounded-2xl shadow-xl flex items-center justify-center">
-                            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                            </svg>
+                        <div class="relative w-12 h-12 bg-gradient-to-br from-brand-500 to-brand-600 rounded-2xl shadow-xl flex items-center justify-center overflow-hidden">
+                            <img :src="logo" alt="Gamji" class="w-full h-full object-cover" />
                         </div>
                     </div>
-                    <span class="text-xl font-bold font-display text-slate-900">GAMJI</span>
+                    <span :class="['text-xl font-bold font-display', isDark ? 'text-white' : 'text-slate-900']">GAMJI</span>
                 </Link>
 
                 <!-- Auth Card -->
-                <div class="auth-card animate-fade-in-up" style="animation-delay: 0.1s;">
+                <div :class="['auth-card animate-fade-in-up p-8 rounded-2xl shadow-xl transition-all duration-300', isDark ? 'bg-slate-900 border border-slate-800' : 'bg-white/80 backdrop-blur-xl border border-white/50']" style="animation-delay: 0.1s;">
                     <!-- Header -->
                     <div class="mb-8">
-                        <h2 class="text-3xl font-bold font-display text-slate-900 mb-2">
+                        <h2 :class="['text-3xl font-bold font-display mb-2', isDark ? 'text-white' : 'text-slate-900']">
                             Create your account ✨
                         </h2>
-                        <p class="text-slate-600">
+                        <p :class="isDark ? 'text-slate-400' : 'text-slate-600'">
                             Start your journey to academic excellence
                         </p>
                     </div>
 
                     <!-- Progress Steps -->
                     <div class="flex items-center gap-2 mb-8">
-                        <div :class="['flex-1 h-2 rounded-full transition-all duration-500', currentStep >= 1 ? 'bg-brand-500' : 'bg-slate-200']"></div>
-                        <div :class="['flex-1 h-2 rounded-full transition-all duration-500', currentStep >= 2 ? 'bg-brand-500' : 'bg-slate-200']"></div>
+                        <div :class="['flex-1 h-2 rounded-full transition-all duration-500', currentStep >= 1 ? 'bg-brand-500' : (isDark ? 'bg-slate-700' : 'bg-slate-200')]"></div>
+                        <div :class="['flex-1 h-2 rounded-full transition-all duration-500', currentStep >= 2 ? 'bg-brand-500' : (isDark ? 'bg-slate-700' : 'bg-slate-200')]"></div>
                     </div>
 
                     <form @submit.prevent="submit" class="space-y-6">
                         <!-- Step 1: Account Type -->
                         <div v-show="currentStep === 1" class="space-y-6">
                             <div>
-                                <label class="block text-sm font-semibold text-slate-700 mb-4">
+                                <label :class="['block text-sm font-semibold mb-4', isDark ? 'text-slate-300' : 'text-slate-700']">
                                     Choose your account type
                                 </label>
                                 <div class="grid grid-cols-1 gap-4">
@@ -174,15 +180,15 @@ const passwordStrengthText = (strength) => {
                                             :class="[
                                                 'p-5 rounded-2xl border-2 transition-all duration-300',
                                                 form.account_type === type.value
-                                                    ? 'border-brand-500 bg-brand-50 ring-4 ring-brand-100'
-                                                    : 'border-slate-200 bg-white hover:border-slate-300 hover:shadow-md'
+                                                    ? (isDark ? 'border-brand-500 bg-brand-900/20 ring-4 ring-brand-500/10' : 'border-brand-500 bg-brand-50 ring-4 ring-brand-100')
+                                                    : (isDark ? 'border-slate-700 bg-slate-800 hover:border-slate-600' : 'border-slate-200 bg-white hover:border-slate-300 hover:shadow-md')
                                             ]"
                                         >
                                             <div class="flex items-start gap-4">
                                                 <div class="text-4xl">{{ type.icon }}</div>
                                                 <div class="flex-1">
                                                     <div class="flex items-center justify-between mb-2">
-                                                        <h3 class="font-bold text-slate-900">{{ type.label }}</h3>
+                                                        <h3 :class="['font-bold', isDark ? 'text-white' : 'text-slate-900']">{{ type.label }}</h3>
                                                         <div
                                                             v-if="form.account_type === type.value"
                                                             class="w-6 h-6 rounded-full bg-brand-500 flex items-center justify-center animate-fade-in"
@@ -190,9 +196,9 @@ const passwordStrengthText = (strength) => {
                                                             <Check class="w-4 h-4 text-white" />
                                                         </div>
                                                     </div>
-                                                    <p class="text-sm text-slate-600 mb-3">{{ type.description }}</p>
+                                                    <p :class="['text-sm mb-3', isDark ? 'text-slate-400' : 'text-slate-600']">{{ type.description }}</p>
                                                     <div class="space-y-1.5">
-                                                        <div v-for="benefit in type.benefits" :key="benefit" class="flex items-center gap-2 text-xs text-slate-500">
+                                                        <div v-for="benefit in type.benefits" :key="benefit" :class="['flex items-center gap-2 text-xs', isDark ? 'text-slate-500' : 'text-slate-500']">
                                                             <div class="w-1 h-1 rounded-full bg-brand-500"></div>
                                                             <span>{{ benefit }}</span>
                                                         </div>
@@ -218,23 +224,23 @@ const passwordStrengthText = (strength) => {
                         <div v-show="currentStep === 2" class="space-y-5">
                             <!-- Name -->
                             <div class="space-y-2">
-                                <label for="name" class="block text-sm font-semibold text-slate-700">
+                                <label for="name" :class="['block text-sm font-semibold', isDark ? 'text-slate-300' : 'text-slate-700']">
                                     Full Name
                                 </label>
                                 <div class="relative group">
                                     <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                        <User class="h-5 w-5 text-slate-400 group-focus-within:text-brand-500 transition-colors" />
+                                        <User :class="['h-5 w-5 transition-colors', isDark ? 'text-slate-500 group-focus-within:text-brand-400' : 'text-slate-400 group-focus-within:text-brand-500']" />
                                     </div>
-                                    <input
-                                        id="name"
-                                        v-model="form.name"
-                                        type="text"
-                                        required
-                                        autocomplete="name"
-                                        class="input-premium pl-12"
-                                        :class="{ 'border-red-500 focus:border-red-500 focus:ring-red-100': form.errors.name }"
-                                        placeholder="John Doe"
-                                    />
+                                <TextInput
+                                    id="name"
+                                    v-model="form.name"
+                                    type="text"
+                                    required
+                                    autocomplete="name"
+                                    class="pl-12"
+                                    :class="{ 'border-red-500 focus:border-red-500 focus:ring-red-100': form.errors.name }"
+                                    placeholder="John Doe"
+                                />
                                 </div>
                                 <p v-if="form.errors.name" class="text-sm text-red-600 flex items-center gap-1 animate-fade-in">
                                     <span class="w-1 h-1 rounded-full bg-red-600"></span>
@@ -244,23 +250,23 @@ const passwordStrengthText = (strength) => {
 
                             <!-- Email -->
                             <div class="space-y-2">
-                                <label for="email" class="block text-sm font-semibold text-slate-700">
+                                <label for="email" :class="['block text-sm font-semibold', isDark ? 'text-slate-300' : 'text-slate-700']">
                                     Email address
                                 </label>
                                 <div class="relative group">
                                     <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                        <Mail class="h-5 w-5 text-slate-400 group-focus-within:text-brand-500 transition-colors" />
+                                        <Mail :class="['h-5 w-5 transition-colors', isDark ? 'text-slate-500 group-focus-within:text-brand-400' : 'text-slate-400 group-focus-within:text-brand-500']" />
                                     </div>
-                                    <input
-                                        id="email"
-                                        v-model="form.email"
-                                        type="email"
-                                        required
-                                        autocomplete="username"
-                                        class="input-premium pl-12"
-                                        :class="{ 'border-red-500 focus:border-red-500 focus:ring-red-100': form.errors.email }"
-                                        placeholder="your.email@example.com"
-                                    />
+                                <TextInput
+                                    id="email"
+                                    v-model="form.email"
+                                    type="email"
+                                    required
+                                    autocomplete="username"
+                                    class="pl-12"
+                                    :class="{ 'border-red-500 focus:border-red-500 focus:ring-red-100': form.errors.email }"
+                                    placeholder="your.email@example.com"
+                                />
                                 </div>
                                 <p v-if="form.errors.email" class="text-sm text-red-600 flex items-center gap-1 animate-fade-in">
                                     <span class="w-1 h-1 rounded-full bg-red-600"></span>
@@ -270,27 +276,27 @@ const passwordStrengthText = (strength) => {
 
                             <!-- Password -->
                             <div class="space-y-2">
-                                <label for="password" class="block text-sm font-semibold text-slate-700">
+                                <label for="password" :class="['block text-sm font-semibold', isDark ? 'text-slate-300' : 'text-slate-700']">
                                     Password
                                 </label>
                                 <div class="relative group">
                                     <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                        <Lock class="h-5 w-5 text-slate-400 group-focus-within:text-brand-500 transition-colors" />
+                                        <Lock :class="['h-5 w-5 transition-colors', isDark ? 'text-slate-500 group-focus-within:text-brand-400' : 'text-slate-400 group-focus-within:text-brand-500']" />
                                     </div>
-                                    <input
-                                        id="password"
-                                        v-model="form.password"
-                                        :type="showPassword ? 'text' : 'password'"
-                                        required
-                                        autocomplete="new-password"
-                                        class="input-premium pl-12 pr-12"
-                                        :class="{ 'border-red-500 focus:border-red-500 focus:ring-red-100': form.errors.password }"
-                                        placeholder="Create a strong password"
-                                    />
+                                <TextInput
+                                    id="password"
+                                    v-model="form.password"
+                                    :type="showPassword ? 'text' : 'password'"
+                                    required
+                                    autocomplete="new-password"
+                                    class="pl-12 pr-12"
+                                    :class="{ 'border-red-500 focus:border-red-500 focus:ring-red-100': form.errors.password }"
+                                    placeholder="Create a strong password"
+                                />
                                     <button
                                         type="button"
                                         @click="showPassword = !showPassword"
-                                        class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 transition-colors"
+                                        :class="['absolute inset-y-0 right-0 pr-4 flex items-center transition-colors', isDark ? 'text-slate-500 hover:text-slate-300' : 'text-slate-400 hover:text-slate-600']"
                                     >
                                         <Eye v-if="!showPassword" class="h-5 w-5" />
                                         <EyeOff v-else class="h-5 w-5" />
@@ -298,9 +304,15 @@ const passwordStrengthText = (strength) => {
                                 </div>
                                 <!-- Password Strength -->
                                 <div v-if="form.password" class="space-y-2 animate-fade-in">
-                                    <div class="progress-bar">
+                                    <div :class="['progress-bar h-1 rounded-full overflow-hidden', isDark ? 'bg-slate-700' : 'bg-slate-100']">
                                         <div 
-                                            class="progress-bar-fill"
+                                            class="progress-bar-fill h-full transition-all duration-300"
+                                            :class="{
+                                                'bg-red-500': passwordStrength(form.password) <= 25,
+                                                'bg-amber-500': passwordStrength(form.password) > 25 && passwordStrength(form.password) <= 50,
+                                                'bg-blue-500': passwordStrength(form.password) > 50 && passwordStrength(form.password) <= 75,
+                                                'bg-emerald-500': passwordStrength(form.password) > 75
+                                            }"
                                             :style="{ width: `${passwordStrength(form.password)}%` }"
                                         ></div>
                                     </div>
@@ -316,26 +328,26 @@ const passwordStrengthText = (strength) => {
 
                             <!-- Confirm Password -->
                             <div class="space-y-2">
-                                <label for="password_confirmation" class="block text-sm font-semibold text-slate-700">
+                                <label for="password_confirmation" :class="['block text-sm font-semibold', isDark ? 'text-slate-300' : 'text-slate-700']">
                                     Confirm Password
                                 </label>
                                 <div class="relative group">
                                     <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                        <Lock class="h-5 w-5 text-slate-400 group-focus-within:text-brand-500 transition-colors" />
+                                        <Lock :class="['h-5 w-5 transition-colors', isDark ? 'text-slate-500 group-focus-within:text-brand-400' : 'text-slate-400 group-focus-within:text-brand-500']" />
                                     </div>
-                                    <input
-                                        id="password_confirmation"
-                                        v-model="form.password_confirmation"
-                                        :type="showPasswordConfirmation ? 'text' : 'password'"
-                                        required
-                                        autocomplete="new-password"
-                                        class="input-premium pl-12 pr-12"
-                                        placeholder="Confirm your password"
-                                    />
+                                <TextInput
+                                    id="password_confirmation"
+                                    v-model="form.password_confirmation"
+                                    :type="showPasswordConfirmation ? 'text' : 'password'"
+                                    required
+                                    autocomplete="new-password"
+                                    class="pl-12 pr-12"
+                                    placeholder="Confirm your password"
+                                />
                                     <button
                                         type="button"
                                         @click="showPasswordConfirmation = !showPasswordConfirmation"
-                                        class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 transition-colors"
+                                        :class="['absolute inset-y-0 right-0 pr-4 flex items-center transition-colors', isDark ? 'text-slate-500 hover:text-slate-300' : 'text-slate-400 hover:text-slate-600']"
                                     >
                                         <Eye v-if="!showPasswordConfirmation" class="h-5 w-5" />
                                         <EyeOff v-else class="h-5 w-5" />
@@ -345,13 +357,13 @@ const passwordStrengthText = (strength) => {
 
                             <!-- Terms -->
                             <label class="flex items-start gap-3 cursor-pointer group">
-                                <input
-                                    v-model="form.terms"
-                                    type="checkbox"
+                                <Checkbox
+                                    name="terms"
+                                    v-model:checked="form.terms"
                                     required
-                                    class="w-5 h-5 mt-0.5 text-brand-600 focus:ring-brand-500 border-slate-300 rounded cursor-pointer transition-all"
+                                    class="w-5 h-5 mt-0.5"
                                 />
-                                <span class="text-sm text-slate-600 leading-relaxed">
+                                <span :class="['text-sm leading-relaxed', isDark ? 'text-slate-400' : 'text-slate-600']">
                                     I agree to the
                                     <Link href="/terms" class="font-semibold text-brand-600 hover:text-brand-700 transition-colors">
                                         Terms of Service
@@ -368,7 +380,7 @@ const passwordStrengthText = (strength) => {
                                 <button
                                     type="button"
                                     @click="currentStep = 1"
-                                    class="px-6 py-3.5 border-2 border-slate-200 text-slate-700 font-semibold rounded-xl hover:border-slate-300 hover:bg-slate-50 transition-all duration-300"
+                                    :class="['px-6 py-3.5 border-2 font-semibold rounded-xl transition-all duration-300', isDark ? 'border-slate-700 text-slate-300 hover:border-slate-600 hover:bg-slate-800' : 'border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50']"
                                 >
                                     Back
                                 </button>
@@ -386,7 +398,7 @@ const passwordStrengthText = (strength) => {
                     </form>
 
                     <!-- Login Link -->
-                    <div class="mt-8 text-center text-sm text-slate-600">
+                    <div :class="['mt-8 text-center text-sm', isDark ? 'text-slate-400' : 'text-slate-600']">
                         Already have an account?
                         <Link
                             :href="route('login')"

@@ -44,9 +44,37 @@ const daysRemaining = computed(() => {
     return diff > 0 ? diff : 0;
 });
 
-const apply = () => {
-    router.post(route('applicant.applications.store'), {
-        award_id: props.award.id
+import { ref } from 'vue';
+import { useForm } from '@inertiajs/vue3';
+import Modal from '@/Components/UI/Modal.vue';
+import InputLabel from '@/Components/InputLabel.vue';
+import TextInput from '@/Components/TextInput.vue';
+import InputError from '@/Components/InputError.vue';
+
+// ... existing props ...
+
+const showModal = ref(false);
+
+const form = useForm({
+    jamb_score: props.applicant?.documents?.find(d => d.type === 'jamb')?.score || '',
+    jamb_file: null,
+    waec_file: null,
+});
+
+const openApplyModal = () => {
+    showModal.value = true;
+};
+
+const closeModal = () => {
+    showModal.value = false;
+    form.reset();
+    form.clearErrors();
+};
+
+const submitApplication = () => {
+    form.post(route('applicant.applications.store', props.award.id), {
+        onSuccess: () => closeModal(),
+        forceFormData: true,
     });
 };
 </script>
@@ -206,7 +234,7 @@ const apply = () => {
 
                 <!-- Apply Button -->
                 <div v-if="canApply">
-                    <Button @click="apply" class="w-full justify-center" size="lg">
+                    <Button @click="openApplyModal" class="w-full justify-center" size="lg">
                         <Send class="w-5 h-5" />
                         Apply Now
                     </Button>
@@ -234,4 +262,98 @@ const apply = () => {
             </div>
         </div>
     </div>
+
+    <!-- Application Modal -->
+    <Modal :show="showModal" @close="closeModal">
+        <div class="p-6">
+            <h2 :class="['text-2xl font-bold mb-4', isDark ? 'text-white' : 'text-slate-900']">
+                Complete Your Application
+            </h2>
+            
+            <p :class="['mb-6', isDark ? 'text-slate-400' : 'text-slate-600']">
+                To apply for <span class="font-semibold">{{ award.title }}</span>, please provide the required information below.
+            </p>
+
+            <form @submit.prevent="submitApplication" class="space-y-6">
+                <!-- JAMB Requirements -->
+                <div v-if="award.category?.toLowerCase() === 'jamb'" class="space-y-4">
+                    <div>
+                        <InputLabel value="JAMB Score" />
+                        <TextInput 
+                            v-model="form.jamb_score"
+                            type="number"
+                            min="0"
+                            max="400"
+                            class="mt-1 block w-full"
+                            placeholder="e.g. 280"
+                            required
+                        />
+                        <InputError :message="form.errors.jamb_score" class="mt-2" />
+                    </div>
+                    
+                    <div>
+                        <InputLabel value="Upload JAMB Result" />
+                        <div v-if="applicant?.documents?.find(d => d.type === 'jamb')" class="mb-2 flex items-center gap-2 text-sm text-green-600 dark:text-green-400">
+                            <CheckCircle class="w-4 h-4" />
+                            <span>Document already uploaded</span>
+                        </div>
+                        <input 
+                            type="file" 
+                            @change="e => form.jamb_file = e.target.files[0]"
+                            accept=".pdf,.jpg,.jpeg,.png"
+                            :class="['mt-1 block w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold transition-colors', isDark ? 'text-slate-400 file:bg-slate-700 file:text-slate-200 hover:file:bg-slate-600' : 'text-slate-500 file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100']"
+                            :required="!applicant?.documents?.find(d => d.type === 'jamb')"
+                        />
+                        <p class="mt-1 text-xs text-slate-500">PDF or Image (Max 2MB)</p>
+                        <InputError :message="form.errors.jamb_file" class="mt-2" />
+                    </div>
+                </div>
+
+                <!-- WAEC Requirements -->
+                <div v-if="award.category?.toLowerCase() === 'waec'" class="space-y-4">
+                     <div>
+                        <InputLabel value="Upload WAEC Result" />
+                        <div v-if="applicant?.documents?.find(d => d.type === 'waec')" class="mb-2 flex items-center gap-2 text-sm text-green-600 dark:text-green-400">
+                            <CheckCircle class="w-4 h-4" />
+                            <span>Document already uploaded</span>
+                        </div>
+                        <input 
+                            type="file" 
+                            @change="e => form.waec_file = e.target.files[0]"
+                            accept=".pdf,.jpg,.jpeg,.png"
+                            :class="['mt-1 block w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold transition-colors', isDark ? 'text-slate-400 file:bg-slate-700 file:text-slate-200 hover:file:bg-slate-600' : 'text-slate-500 file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100']"
+                             :required="!applicant?.documents?.find(d => d.type === 'waec')"
+                        />
+                        <p class="mt-1 text-xs text-slate-500">PDF or Image (Max 2MB)</p>
+                        <InputError :message="form.errors.waec_file" class="mt-2" />
+                    </div>
+                </div>
+
+                <!-- General/Other Requirements -->
+                <div v-if="!['jamb', 'waec'].includes(award.category?.toLowerCase())">
+                    <p :class="['text-sm italic', isDark ? 'text-slate-400' : 'text-slate-500']">
+                        No additional documents are required for this category at this stage. Click submit to proceed.
+                    </p>
+                </div>
+
+                <div class="flex justify-end gap-3 mt-8">
+                    <Button 
+                        type="button" 
+                        variant="secondary" 
+                        @click="closeModal"
+                    >
+                        Cancel
+                    </Button>
+                    <Button 
+                        type="submit" 
+                        :disabled="form.processing"
+                        :class="{ 'opacity-75 cursor-not-allowed': form.processing }"
+                    >
+                        <span v-if="form.processing">Submitting...</span>
+                        <span v-else>Submit Application</span>
+                    </Button>
+                </div>
+            </form>
+        </div>
+    </Modal>
 </template>

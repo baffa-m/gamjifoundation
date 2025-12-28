@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Applicant extends Model
 {
+    use HasFactory;
     
     protected $fillable = [
         'user_id',
@@ -22,7 +24,12 @@ class Applicant extends Model
         'school_name',
         'jamb_reg_number',
         'waec_reg_number',
+        'waec_results',
         'profile_picture'
+    ];
+
+    protected $casts = [
+        'waec_results' => 'array',
     ];
 
     public function user(): BelongsTo
@@ -33,6 +40,21 @@ class Applicant extends Model
     public function applications(): HasMany
     {
         return $this->hasMany(Application::class);
+    }
+
+    public function documents(): HasMany
+    {
+        return $this->hasMany(ApplicantDocument::class);
+    }
+
+    public function getJambDocument()
+    {
+        return $this->documents()->where('type', 'jamb')->first();
+    }
+
+    public function getWaecDocument()
+    {
+        return $this->documents()->where('type', 'waec')->first();
     }
 
     public function scopeByEmail($query, $email)

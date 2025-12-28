@@ -10,6 +10,10 @@ import {
 import { useTheme } from '@/Composables/useTheme';
 import { usePermissions } from '@/Composables/usePermissions';
 import FlashMessage from '@/Components/Shared/FlashMessage.vue';
+import Dropdown from '@/Components/Dropdown.vue';
+import DropdownLink from '@/Components/DropdownLink.vue';
+
+import logo from '@/../images/logo.jpeg';
 
 const page = usePage();
 const { user, isAdmin, isApplicant, isSponsor } = usePermissions();
@@ -54,7 +58,7 @@ const isActive = (href) => {
 </script>
 
 <template>
-    <div :class="['min-h-screen font-sans flex transition-colors duration-500', isDark ? 'bg-slate-950 text-slate-100' : 'bg-slate-50 text-slate-800']">
+    <div :class="['h-screen overflow-hidden font-sans flex transition-colors duration-500', isDark ? 'bg-slate-950 text-slate-100' : 'bg-slate-50 text-slate-800']">
         <FlashMessage />
 
         <!-- Mobile sidebar backdrop -->
@@ -81,14 +85,17 @@ const isActive = (href) => {
             <!-- Logo -->
             <div class="relative h-16 flex items-center px-6 border-b border-slate-800/50 shrink-0 backdrop-blur-sm">
                 <Link href="/" class="flex items-center gap-3 overflow-hidden group">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-brand-600 flex items-center justify-center shrink-0 shadow-glow group-hover:shadow-glow-lg transition-all duration-300 group-hover:scale-110">
-                        <span class="font-bold text-white font-display text-lg">G</span>
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-brand-600 flex items-center justify-center shrink-0 shadow-glow group-hover:shadow-glow-lg transition-all duration-300 group-hover:scale-110 overflow-hidden">
+                        <img :src="logo" alt="Gamji" class="w-full h-full object-cover" />
                     </div>
-                    <span 
-                        :class="['font-bold text-xl tracking-wide font-display transition-all duration-300 bg-gradient-to-r from-white to-brand-100 bg-clip-text text-transparent', isSidebarCollapsed ? 'lg:opacity-0 lg:hidden' : 'opacity-100']"
-                    >
-                        GAMJI
-                    </span>
+                    <div :class="['flex flex-col transition-all duration-300', isSidebarCollapsed ? 'lg:opacity-0 lg:hidden' : 'opacity-100']">
+                        <span class="font-bold text-xl tracking-wide font-display bg-gradient-to-r from-white to-brand-100 bg-clip-text text-transparent">
+                            GAMJI
+                        </span>
+                        <span class="text-[10px] uppercase tracking-wider font-bold text-brand-400 -mt-1">
+                            Foundation
+                        </span>
+                    </div>
                 </Link>
             </div>
 
@@ -140,36 +147,7 @@ const isActive = (href) => {
                 </Link>
             </nav>
 
-            <!-- User Profile (Bottom) -->
-            <div class="p-4 border-t border-slate-800 shrink-0">
-                <div class="flex items-center gap-3 overflow-hidden">
-                    <div class="w-9 h-9 rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white font-bold shrink-0 border border-slate-600">
-                        {{ user?.name?.charAt(0) }}
-                    </div>
-                    <div 
-                        :class="['transition-all duration-300 overflow-hidden', isSidebarCollapsed ? 'lg:opacity-0 lg:w-0' : 'opacity-100 w-auto']"
-                    >
-                        <p class="text-sm font-semibold truncate text-slate-200">{{ user?.name }}</p>
-                        <div class="flex items-center gap-3 mt-1">
-                            <Link 
-                                :href="route('logout')" 
-                                method="post" 
-                                as="button" 
-                                class="text-xs text-slate-500 hover:text-brand-400 transition-colors truncate flex items-center gap-1"
-                            >
-                                <LogOut class="w-3 h-3" /> Sign out
-                            </Link>
-                            <button 
-                                @click="toggleTheme" 
-                                class="lg:hidden text-slate-500 hover:text-brand-400 transition-colors"
-                            >
-                                <Sun v-if="isDark" class="w-3 h-3" />
-                                <Moon v-else class="w-3 h-3" />
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <!-- User Profile removed from sidebar -->
         </aside>
 
         <!-- Main Content Wrapper -->
@@ -229,6 +207,43 @@ const isActive = (href) => {
                         <Bell class="w-6 h-6" />
                         <span :class="['absolute top-1.5 right-2 w-2 h-2 bg-red-500 rounded-full border animate-pulse', isDark ? 'border-slate-900' : 'border-white']"></span>
                     </button>
+
+                    <!-- Profile Dropdown -->
+                    <div class="relative ml-2">
+                        <Dropdown align="right" width="48">
+                            <template #trigger>
+                                <button class="flex items-center transition focus:outline-none">
+                                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white font-bold text-lg shadow-md border-2 border-white dark:border-slate-700">
+                                        {{ user?.name?.charAt(0) }}
+                                    </div>
+                                </button>
+                            </template>
+                            <template #content>
+                                <div class="px-4 py-3 border-b border-gray-100 dark:border-gray-700">
+                                    <p class="text-sm font-semibold text-gray-900 dark:text-white">
+                                        {{ user?.name }}
+                                    </p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 truncate">
+                                        {{ user?.email }}
+                                    </p>
+                                </div>
+                                
+                                <DropdownLink :href="route('profile.edit')">
+                                    <div class="flex items-center gap-2">
+                                        <Users class="w-4 h-4" />
+                                        Profile
+                                    </div>
+                                </DropdownLink>
+                                
+                                <DropdownLink :href="route('logout')" method="post" as="button">
+                                    <div class="flex items-center gap-2 text-red-600 dark:text-red-400">
+                                        <LogOut class="w-4 h-4" />
+                                        Log Out
+                                    </div>
+                                </DropdownLink>
+                            </template>
+                        </Dropdown>
+                    </div>
                 </div>
             </header>
 

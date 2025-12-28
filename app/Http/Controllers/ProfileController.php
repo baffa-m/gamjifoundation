@@ -18,9 +18,21 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): Response
     {
+        $user = $request->user();
+        $applicant = null;
+        $sponsor = null;
+
+        if ($user->hasRole('applicant')) {
+            $applicant = \App\Models\Applicant::where('user_id', $user->id)->first();
+        } elseif ($user->hasRole('sponsor')) {
+            $sponsor = \App\Models\Sponsor::where('user_id', $user->id)->first();
+        }
+
         return Inertia::render('Profile/Edit', [
-            'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
+            'mustVerifyEmail' => $user instanceof MustVerifyEmail,
             'status' => session('status'),
+            'applicant' => $applicant,
+            'sponsor' => $sponsor,
         ]);
     }
 

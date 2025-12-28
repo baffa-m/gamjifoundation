@@ -44,7 +44,7 @@ const handleImageChange = (e) => {
 };
 
 const submit = () => {
-    form.post(route('admin.news.update', props.news.id), { _method: 'PUT' });
+    form.put(route('admin.news.update', props.news.id));
 };
 </script>
 

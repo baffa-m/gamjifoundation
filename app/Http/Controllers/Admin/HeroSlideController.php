@@ -13,7 +13,7 @@ class HeroSlideController extends Controller
     public function index()
     {
         return Inertia::render('Admin/HeroSlides/Index', [
-            'slides' => HeroSlide::orderBy('order')->get()
+            'slides' => HeroSlide::orderBy('order')->paginate(10)
         ]);
     }
 
@@ -28,14 +28,18 @@ class HeroSlideController extends Controller
             'title' => 'required|string|max:255',
             'subtitle' => 'required|string',
             'image' => 'required|image|max:2048',
-            'cta_text' => 'required|string|max:50',
-            'cta_link' => 'required|string|max:255',
+            'cta_text' => 'nullable|string|max:50',
+            'cta_link' => 'nullable|string|max:255',
             'order' => 'integer|min:0',
             'is_active' => 'boolean'
         ]);
 
         if ($request->hasFile('image')) {
             $validated['image'] = $request->file('image')->store('hero-slides', 'public');
+        }
+
+        if (!empty($validated['cta_text']) && empty($validated['cta_link'])) {
+            $validated['cta_link'] = '/register';
         }
 
         HeroSlide::create($validated);
@@ -57,8 +61,8 @@ class HeroSlideController extends Controller
             'title' => 'required|string|max:255',
             'subtitle' => 'required|string',
             'image' => 'nullable|image|max:2048',
-            'cta_text' => 'required|string|max:50',
-            'cta_link' => 'required|string|max:255',
+            'cta_text' => 'nullable|string|max:50',
+            'cta_link' => 'nullable|string|max:255',
             'order' => 'integer|min:0',
             'is_active' => 'boolean'
         ]);
@@ -68,6 +72,10 @@ class HeroSlideController extends Controller
                 Storage::disk('public')->delete($heroSlide->image);
             }
             $validated['image'] = $request->file('image')->store('hero-slides', 'public');
+        }
+
+        if (!empty($validated['cta_text']) && empty($validated['cta_link'])) {
+            $validated['cta_link'] = '/register';
         }
 
         $heroSlide->update($validated);

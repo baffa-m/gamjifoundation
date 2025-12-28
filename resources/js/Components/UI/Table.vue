@@ -18,17 +18,21 @@ const props = defineProps({
     actions: {
         type: Boolean,
         default: false
+    },
+    clickable: {
+        type: Boolean,
+        default: false
     }
 });
 
-const emit = defineEmits(['page-change']);
+const emit = defineEmits(['page-change', 'row-click']);
 </script>
 
 <template>
-    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+    <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-left">
-                <thead class="bg-slate-50 text-xs uppercase text-slate-500 font-semibold tracking-wider">
+                <thead class="bg-slate-50 dark:bg-slate-700/50 text-xs uppercase text-slate-500 dark:text-slate-400 font-semibold tracking-wider">
                     <tr>
                         <th 
                             v-for="header in headers" 
@@ -42,16 +46,17 @@ const emit = defineEmits(['page-change']);
                         </th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100">
+                <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
                     <tr 
                         v-for="(item, index) in items" 
                         :key="item.id || index"
-                        class="hover:bg-slate-50/80 transition-colors group"
+                        @click="clickable ? $emit('row-click', item) : null"
+                        :class="['transition-colors group', clickable ? 'cursor-pointer hover:bg-brand-50/50 dark:hover:bg-slate-700/80' : 'hover:bg-slate-50/80 dark:hover:bg-slate-700/50']"
                     >
                         <td 
                             v-for="header in headers" 
                             :key="header.key"
-                            class="px-6 py-4 text-sm text-slate-600"
+                            class="px-6 py-4 text-sm text-slate-600 dark:text-slate-300"
                         >
                             <slot :name="header.key" :item="item" :value="item[header.key]">
                                 {{ item[header.key] }}
@@ -73,7 +78,7 @@ const emit = defineEmits(['page-change']);
         </div>
 
         <!-- Pagination -->
-        <div v-if="pagination && pagination.links" class="p-4 border-t border-slate-100 bg-slate-50 flex items-center justify-between">
+        <div v-if="pagination && pagination.links" class="p-4 border-t border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex items-center justify-between">
             <div class="text-sm text-slate-500">
                 Showing <span class="font-medium">{{ pagination.from || 0 }}</span> to <span class="font-medium">{{ pagination.to || 0 }}</span> of <span class="font-medium">{{ pagination.total }}</span> results
             </div>
@@ -90,7 +95,7 @@ const emit = defineEmits(['page-change']);
                             ? 'bg-brand-600 text-white shadow-sm' 
                             : !link.url 
                                 ? 'text-slate-300 cursor-not-allowed' 
-                                : 'text-slate-600 hover:bg-white hover:text-brand-600 border border-transparent hover:border-slate-200'
+                                : 'text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-700 hover:text-brand-600 dark:hover:text-brand-400 border border-transparent hover:border-slate-200 dark:hover:border-slate-600'
                     ]"
                 />
             </div>

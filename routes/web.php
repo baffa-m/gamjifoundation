@@ -13,6 +13,19 @@ Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
 Route::get('/news', [NewsController::class, 'index'])->name('news.index');
 Route::get('/news/{slug}', [NewsController::class, 'show'])->name('news.show');
 
+// Placeholder routes for Coming Soon features
+Route::get('/scholarships', function() { return Inertia\Inertia::render('ComingSoon'); })->name('scholarships');
+Route::get('/mentorship', function() { return Inertia\Inertia::render('ComingSoon'); })->name('mentorship');
+Route::get('/stories', function() { return Inertia\Inertia::render('ComingSoon'); })->name('stories');
+Route::get('/exam-prep', function() { return Inertia\Inertia::render('ComingSoon'); })->name('exam-prep');
+Route::get('/career', function() { return Inertia\Inertia::render('ComingSoon'); })->name('career');
+Route::get('/blog', function() { return Inertia\Inertia::render('ComingSoon'); })->name('blog');
+Route::get('/contact', function() { return Inertia\Inertia::render('ComingSoon'); })->name('contact');
+Route::get('/partner', function() { return Inertia\Inertia::render('ComingSoon'); })->name('partner');
+Route::get('/privacy', function() { return Inertia\Inertia::render('ComingSoon'); })->name('privacy');
+Route::get('/terms', function() { return Inertia\Inertia::render('ComingSoon'); })->name('terms');
+Route::get('/cookies', function() { return Inertia\Inertia::render('ComingSoon'); })->name('cookies');
+
 // Breeze auth routes
 require __DIR__.'/auth.php';
 
@@ -36,6 +49,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('applications/{application}', [Admin\ApplicationController::class, 'show'])->name('applications.show');
     Route::patch('applications/{application}/review', [Admin\ApplicationController::class, 'review'])->name('applications.review');
     Route::patch('applications/{application}/approve', [Admin\ApplicationController::class, 'approve'])->name('applications.approve');
+    Route::patch('applications/{application}/shortlist', [Admin\ApplicationController::class, 'shortlist'])->name('applications.shortlist');
     Route::patch('applications/{application}/reject', [Admin\ApplicationController::class, 'reject'])->name('applications.reject');
     
     Route::get('sponsors', [Admin\SponsorController::class, 'index'])->name('sponsors.index');
@@ -47,6 +61,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
 // Applicant Routes
 Route::middleware(['auth', 'role:applicant'])->prefix('applicant')->name('applicant.')->group(function () {
+    Route::get('/profile/create', [Applicant\ProfileController::class, 'create'])->name('profile.create');
+    Route::post('/profile/create', [Applicant\ProfileController::class, 'store'])->name('profile.store');
+    Route::patch('/profile/update', [Applicant\ProfileController::class, 'update'])->name('profile.update');
+
     Route::get('/dashboard', [Applicant\DashboardController::class, 'index'])->name('dashboard');
     Route::get('/awards', [Applicant\AwardController::class, 'index'])->name('awards.index');
     Route::get('/awards/{award}', [Applicant\AwardController::class, 'show'])->name('awards.show');
@@ -63,6 +81,7 @@ Route::middleware(['auth', 'role:sponsor'])->prefix('sponsor')->name('sponsor.')
     
     Route::get('/register', [Sponsor\SponsorshipController::class, 'create'])->name('register');
     Route::post('/register', [Sponsor\SponsorshipController::class, 'store'])->name('register.store');
+    Route::patch('/register', [Sponsor\SponsorshipController::class, 'update'])->name('register.update');
 });
 
 require __DIR__.'/auth.php';

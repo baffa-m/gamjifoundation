@@ -20,10 +20,7 @@ const categories = [
     { value: '', label: 'All Categories' },
     { value: 'jamb', label: 'JAMB' },
     { value: 'waec', label: 'WAEC' },
-    { value: 'general', label: 'General' },
-    { value: 'stem', label: 'STEM' },
-    { value: 'arts', label: 'Arts' },
-    { value: 'sports', label: 'Sports' }
+    { value: 'general', label: 'General' }
 ];
 
 const search = (e) => {
@@ -135,7 +132,7 @@ const formatAmount = (amount) => {
                 <div class="p-6">
                     <!-- Category & Deadline -->
                     <div class="flex items-center justify-between mb-4">
-                        <Badge :variant="award.category === 'stem' ? 'info' : award.category === 'jamb' ? 'success' : 'default'">
+                        <Badge :variant="award.category === 'jamb' ? 'success' : 'default'">
                             {{ award.category?.toUpperCase() }}
                         </Badge>
                         <div :class="['flex items-center gap-1 text-xs', isDark ? 'text-slate-400' : 'text-slate-500']">

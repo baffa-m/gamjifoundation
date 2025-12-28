@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class News extends Model
 {
+    use HasFactory;
     protected $fillable = [
         'author_id',
         'title',
@@ -29,6 +31,10 @@ class News extends Model
     {
         return $this->belongsTo(Award::class, 'related_award_id');
     }
+
+    protected $casts = [
+        'published_at' => 'datetime',
+    ];
 
     public function scopePublished($query)
     {

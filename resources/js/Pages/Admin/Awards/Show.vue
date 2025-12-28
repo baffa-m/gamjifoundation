@@ -4,7 +4,7 @@ import { Link, router } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { 
     ArrowLeft, Award, Calendar, DollarSign, Users, Edit, Trash2,
-    CheckCircle, Clock, XCircle, AlertCircle, Building2, Mail
+    CheckCircle, Clock, XCircle, AlertCircle, Building2, Mail, Eye
 } from 'lucide-vue-next';
 import { useTheme } from '@/Composables/useTheme';
 import Badge from '@/Components/UI/Badge.vue';
@@ -129,13 +129,21 @@ const deleteAward = () => {
                                     </p>
                                     <p :class="['text-sm flex items-center gap-1', isDark ? 'text-slate-400' : 'text-slate-500']">
                                         <Mail class="w-3 h-3" />
-                                        {{ application.applicant?.user?.email || 'N/A' }}
                                     </p>
                                 </div>
                             </div>
-                            <Badge :variant="applicationStatusColors[application.status] || 'default'">
-                                {{ application.status }}
-                            </Badge>
+                            <div class="flex items-center gap-4">
+                                <Badge :variant="applicationStatusColors[application.status] || 'default'">
+                                    {{ application.status }}
+                                </Badge>
+                                <Link 
+                                    :href="route('admin.applications.show', application.id)"
+                                    :class="['p-2 rounded-lg transition-colors', isDark ? 'bg-slate-700 hover:bg-slate-600 text-slate-300 hover:text-white' : 'bg-white border hover:bg-slate-50 text-slate-600 hover:text-slate-900']"
+                                    title="Review Application"
+                                >
+                                    <Eye class="w-4 h-4" />
+                                </Link>
+                            </div>
                         </div>
                     </div>
 

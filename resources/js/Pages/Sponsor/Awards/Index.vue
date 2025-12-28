@@ -167,7 +167,12 @@ const deleteAward = (award) => {
                         </tr>
                     </thead>
                     <tbody :class="['divide-y', isDark ? 'divide-slate-700' : 'divide-slate-100']">
-                        <tr v-for="award in awards.data" :key="award.id" :class="['transition-colors', isDark ? 'hover:bg-slate-800/50' : 'hover:bg-slate-50']">
+                        <tr 
+                            v-for="award in awards.data" 
+                            :key="award.id" 
+                            @click="router.visit(route('sponsor.awards.show', award.id))"
+                            :class="['transition-colors cursor-pointer', isDark ? 'hover:bg-slate-800/50' : 'hover:bg-slate-50']"
+                        >
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-3">
                                     <div :class="['w-10 h-10 rounded-lg flex items-center justify-center shrink-0', isDark ? 'bg-brand-600/20 text-brand-400' : 'bg-brand-100 text-brand-600']">
@@ -205,22 +210,24 @@ const deleteAward = (award) => {
                                     <Link 
                                         :href="route('sponsor.awards.show', award.id)"
                                         :class="['p-2 rounded-lg transition-colors', isDark ? 'hover:bg-slate-700 text-slate-400 hover:text-white' : 'hover:bg-slate-100 text-slate-500 hover:text-slate-700']"
+                                        @click.stop
                                     >
-                                        <Eye class="w-4 h-4" />
+                                        <Eye class="w-5 h-5" />
                                     </Link>
                                     <Link 
                                         v-if="award.status === 'draft'"
                                         :href="route('sponsor.awards.edit', award.id)"
                                         :class="['p-2 rounded-lg transition-colors', isDark ? 'hover:bg-slate-700 text-slate-400 hover:text-white' : 'hover:bg-slate-100 text-slate-500 hover:text-slate-700']"
+                                        @click.stop
                                     >
-                                        <Edit class="w-4 h-4" />
+                                        <Edit class="w-5 h-5" />
                                     </Link>
                                     <button 
                                         v-if="!award.applications_count"
-                                        @click="deleteAward(award)"
+                                        @click.stop="deleteAward(award)"
                                         :class="['p-2 rounded-lg transition-colors', isDark ? 'hover:bg-red-900/30 text-slate-400 hover:text-red-400' : 'hover:bg-red-50 text-slate-500 hover:text-red-600']"
                                     >
-                                        <Trash2 class="w-4 h-4" />
+                                        <Trash2 class="w-5 h-5" />
                                     </button>
                                 </div>
                             </td>

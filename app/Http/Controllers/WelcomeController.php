@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\{HeroSlide, Award, News};
+use Carbon\Carbon;
 use Inertia\Inertia;
 
 class WelcomeController extends Controller
@@ -57,11 +58,25 @@ class WelcomeController extends Controller
                         'title' => $award->title,
                         'sponsor' => $award->sponsor->organization_name ?? 'N/A',
                         'amount' => '₦' . number_format($award->amount, 2),
-                        'deadline' => $award->application_end_date->format('M d'),
+                        'deadline' => optional($award->application_end_date)->format('M d'),
                         'type' => ucfirst($award->category)
                     ];
                 }),
-            'latestNews' => News::published()->latest()->take(3)->get()
+            'latestNews' => News::published()
+                ->latest()
+                ->take(3)
+                ->get()
+                ->map(function ($news) {
+                    return [
+                        'id' => $news->id,
+                        'slug' => $news->slug,
+                        'title' => $news->title,
+                        'excerpt' => \Illuminate\Support\Str::limit($news->description ?? $news->content, 100),
+                        'image' => $news->featured_image ? asset('storage/' . $news->featured_image) : null,
+                        'category' => ucfirst($news->category),
+                        'date' => optional($news->published_at)->format('M d, Y') ?? $news->created_at->format('M d, Y'),
+                    ];
+                })
         ]);
     }
 }

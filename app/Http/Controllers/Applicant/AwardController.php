@@ -11,7 +11,12 @@ class AwardController extends Controller
 {
     public function index(Request $request)
     {
-        $applicant = Applicant::where('user_id', auth()->id)->first();
+        $applicant = Applicant::where('user_id', auth()->id())->first();
+
+        if (!$applicant) {
+            return redirect()->route('applicant.profile.create')
+                ->with('message', 'Please complete your profile to continue.');
+        }
         
         $query = Award::active()
             ->where('application_end_date', '>=', now())
@@ -40,7 +45,12 @@ class AwardController extends Controller
 
     public function show(Award $award)
     {
-        $applicant = Applicant::where('user_id', auth()->id)->first();
+        $applicant = Applicant::where('user_id', auth()->id())->first();
+
+        if (!$applicant) {
+            return redirect()->route('applicant.profile.create')
+                ->with('message', 'Please complete your profile to continue.');
+        }
         
         $hasApplied = Application::where('applicant_id', $applicant?->id)
             ->where('award_id', $award->id)
@@ -49,7 +59,8 @@ class AwardController extends Controller
         return Inertia::render('Applicant/Awards/Show', [
             'award' => $award->load('sponsor.user'),
             'hasApplied' => $hasApplied,
-            'canApply' => $award->isOpenForApplications() && !$hasApplied
+            'canApply' => $award->isOpenForApplications() && !$hasApplied,
+            'applicant' => $applicant->load('documents'),
         ]);
     }
 }

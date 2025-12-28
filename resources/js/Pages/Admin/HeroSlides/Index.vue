@@ -3,10 +3,12 @@ import { ref } from 'vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Table from '@/Components/UI/Table.vue';
-import Badge from '@/Components/UI/Badge.vue';
+import { useTheme } from '@/Composables/useTheme';
 import { Plus, Edit, Trash2, Image as ImageIcon, Eye } from 'lucide-vue-next';
 
 defineOptions({ layout: AuthenticatedLayout });
+
+const { isDark } = useTheme();
 
 const props = defineProps({
     slides: Object
@@ -33,15 +35,15 @@ const deleteSlide = (id) => {
         <!-- Header -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-                <h1 class="text-3xl font-bold font-display text-slate-900">Hero Slides</h1>
-                <p class="text-slate-500 mt-1">Manage the homepage slider content.</p>
+                <h1 :class="['text-3xl font-bold font-display', isDark ? 'text-white' : 'text-slate-900']">Hero Slides</h1>
+                <p :class="['mt-1', isDark ? 'text-slate-400' : 'text-slate-500']">Manage the homepage slider content.</p>
             </div>
             
             <Link 
                 :href="route('admin.hero-slides.create')"
                 class="px-4 py-2 bg-brand-600 text-white rounded-lg font-semibold hover:bg-brand-700 transition shadow-lg shadow-brand-600/20 flex items-center gap-2"
             >
-                <Plus class="w-4 h-4" />
+                <Plus class="w-5 h-5" />
                 Add Slide
             </Link>
         </div>
@@ -52,16 +54,18 @@ const deleteSlide = (id) => {
             :items="slides.data" 
             :pagination="slides"
             :actions="true"
+            :clickable="true"
+            @row-click="(item) => router.visit(route('admin.hero-slides.edit', item.id))"
         >
             <template #image="{ item }">
-                <div class="w-24 h-16 rounded-lg overflow-hidden border border-slate-200 bg-slate-100 relative group">
+                <div :class="['w-24 h-16 rounded-lg overflow-hidden border relative group', isDark ? 'bg-slate-800 border-slate-700' : 'bg-slate-100 border-slate-200']">
                     <img 
                         v-if="item.image_url" 
                         :src="item.image_url" 
                         class="w-full h-full object-cover"
                         alt="Slide preview"
                     />
-                    <div v-else class="w-full h-full flex items-center justify-center text-slate-400">
+                    <div v-else :class="['w-full h-full flex items-center justify-center', isDark ? 'text-slate-600' : 'text-slate-400']">
                         <ImageIcon class="w-6 h-6" />
                     </div>
                 </div>
@@ -69,17 +73,17 @@ const deleteSlide = (id) => {
 
             <template #content="{ item }">
                 <div class="max-w-md">
-                    <div class="font-bold text-slate-800 truncate">{{ item.title }}</div>
-                    <div class="text-sm text-slate-500 line-clamp-2">{{ item.subtitle }}</div>
+                    <div :class="['font-bold truncate', isDark ? 'text-white' : 'text-slate-800']">{{ item.title }}</div>
+                    <div :class="['text-sm line-clamp-2', isDark ? 'text-slate-400' : 'text-slate-500']">{{ item.subtitle }}</div>
                 </div>
             </template>
 
             <template #cta="{ item }">
                 <div v-if="item.cta_text" class="text-sm">
-                    <span class="font-medium text-brand-600">{{ item.cta_text }}</span>
-                    <div class="text-xs text-slate-400 truncate max-w-[150px]">{{ item.cta_link }}</div>
+                    <span :class="['font-medium', isDark ? 'text-brand-400' : 'text-brand-600']">{{ item.cta_text }}</span>
+                    <div :class="['text-xs truncate max-w-[150px]', isDark ? 'text-slate-500' : 'text-slate-400']">{{ item.cta_link }}</div>
                 </div>
-                <span v-else class="text-slate-400 text-xs italic">No CTA</span>
+                <span v-else :class="['text-xs italic', isDark ? 'text-slate-600' : 'text-slate-400']">No CTA</span>
             </template>
 
             <template #status="{ item }">
@@ -92,17 +96,18 @@ const deleteSlide = (id) => {
                 <div class="flex justify-end gap-2">
                     <Link 
                         :href="route('admin.hero-slides.edit', item.id)"
-                        class="p-2 text-slate-400 hover:text-brand-600 hover:bg-brand-50 rounded-full transition-colors"
+                        :class="['p-2 rounded-full transition-colors', isDark ? 'text-slate-400 hover:text-brand-400 hover:bg-slate-700' : 'text-slate-400 hover:text-brand-600 hover:bg-brand-50']"
                         title="Edit"
+                        @click.stop
                     >
-                        <Edit class="w-4 h-4" />
+                        <Edit class="w-5 h-5" />
                     </Link>
                     <button 
-                        @click="deleteSlide(item.id)"
-                        class="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-full transition-colors"
+                        @click.stop="deleteSlide(item.id)"
+                        :class="['p-2 rounded-full transition-colors', isDark ? 'text-slate-400 hover:text-rose-400 hover:bg-rose-900/30' : 'text-slate-400 hover:text-rose-600 hover:bg-rose-50']"
                         title="Delete"
                     >
-                        <Trash2 class="w-4 h-4" />
+                        <Trash2 class="w-5 h-5" />
                     </button>
                 </div>
             </template>

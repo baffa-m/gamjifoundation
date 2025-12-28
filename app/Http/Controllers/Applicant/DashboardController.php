@@ -10,7 +10,7 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $applicant = Applicant::where('user_id', auth()->id)->first();
+        $applicant = Applicant::where('user_id', auth()->id())->first();
 
         if (!$applicant) {
             // Redirect to profile completion

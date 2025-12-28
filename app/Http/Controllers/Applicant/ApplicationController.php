@@ -13,6 +13,11 @@ class ApplicationController extends Controller
     public function index(Request $request)
     {
         $applicant = Applicant::where('user_id', auth()->id())->first();
+
+        if (!$applicant) {
+            return redirect()->route('applicant.profile.create')
+                ->with('message', 'Please complete your profile to continue.');
+        }
         
         $query = Application::where('applicant_id', $applicant->id)
             ->with('award');
@@ -30,6 +35,11 @@ class ApplicationController extends Controller
     public function show(Application $application)
     {
         $applicant = Applicant::where('user_id', auth()->id())->first();
+
+        if (!$applicant) {
+            return redirect()->route('applicant.profile.create')
+                ->with('message', 'Please complete your profile to continue.');
+        }
         
         // Ensure user can only view their own application
         if ($application->applicant_id !== $applicant->id) {
@@ -45,6 +55,11 @@ class ApplicationController extends Controller
     {
         $applicant = Applicant::where('user_id', auth()->id())->first();
 
+        if (!$applicant) {
+            return redirect()->route('applicant.profile.create')
+                ->with('message', 'Please complete your profile to continue.');
+        }
+
         // Check if award is still open
         if (!$award->isOpenForApplications()) {
             return back()->with('error', 'This award is no longer accepting applications.');
@@ -57,10 +72,39 @@ class ApplicationController extends Controller
             return back()->with('error', 'You have already applied for this award.');
         }
 
-        $validated = $request->validate([
-            'supporting_documents' => 'nullable|string',
-            'jamb_score' => 'nullable|integer|min:0|max:400',
-        ]);
+        // Handle Documents Upload
+        if ($request->hasFile('jamb_file')) {
+            $path = $request->file('jamb_file')->store('applicants/documents', 'public');
+            $applicant->documents()->updateOrCreate(
+                ['type' => 'jamb'],
+                ['file_path' => $path, 'score' => $request->jamb_score]
+            );
+        }
+
+        if ($request->hasFile('waec_file')) {
+            $path = $request->file('waec_file')->store('applicants/documents', 'public');
+            $applicant->documents()->updateOrCreate(
+                ['type' => 'waec'],
+                ['file_path' => $path]
+            );
+        }
+        
+        // Enforce Eligibility
+        $category = strtolower($award->category);
+        if ($category === 'jamb') {
+            $jambDoc = $applicant->getJambDocument();
+            if (!$jambDoc) {
+                 return back()->with('error', 'JAMB result upload is required for this award.');
+            }
+            // Optional: Check score strictness if needed, but for now just presence
+        }
+
+        if ($category === 'waec') {
+            $waecDoc = $applicant->getWaecDocument();
+             if (!$waecDoc) {
+                 return back()->with('error', 'WAEC result upload is required for this award.');
+            }
+        }
 
         Application::create([
             'applicant_id' => $applicant->id,
@@ -68,8 +112,9 @@ class ApplicationController extends Controller
             'application_number' => 'APP-' . strtoupper(Str::random(10)),
             'application_date' => now(),
             'application_status' => 'pending',
-            'supporting_documents' => $validated['supporting_documents'] ?? null,
-            'jamb_score' => $validated['jamb_score'] ?? null,
+            // supporting_documents logic can be deprecated or used for supplementals
+            // jamb_score column in application table also becomes redundant or a snapshot
+            'jamb_score' => $applicant->getJambDocument()?->score, 
         ]);
 
         return redirect()->route('applicant.applications.index')
