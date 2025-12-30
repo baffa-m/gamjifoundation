@@ -1,6 +1,6 @@
 <script setup>
 import { defineOptions } from 'vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, Head } from '@inertiajs/vue3';
 import { ArrowLeft, Construction } from 'lucide-vue-next';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import { useTheme } from '@/Composables/useTheme';
@@ -11,6 +11,7 @@ const { isDark } = useTheme();
 </script>
 
 <template>
+    <Head title="Coming Soon" />
     <div :class="['min-h-screen flex items-center justify-center p-4', isDark ? 'bg-slate-950' : 'bg-slate-50']">
         <div class="text-center max-w-lg mx-auto animate-fade-in-up">
             <div :class="['w-24 h-24 mx-auto mb-8 rounded-full flex items-center justify-center', isDark ? 'bg-brand-900/30 text-brand-400' : 'bg-brand-100 text-brand-600']">

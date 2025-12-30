@@ -1,15 +1,31 @@
 <script setup>
-import { defineOptions, ref } from 'vue';
+import { defineOptions, ref, computed } from 'vue';
 import { useForm, Head } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { User, MapPin, School, FileText, Save, Calendar, Phone } from 'lucide-vue-next';
 import { useTheme } from '@/Composables/useTheme';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
+import SelectInput from '@/Components/SelectInput.vue';
+import SearchableSelect from '@/Components/SearchableSelect.vue';
 import InputError from '@/Components/InputError.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 
 defineOptions({ layout: AuthenticatedLayout });
+
+const props = defineProps({
+    locations: Array
+});
+
+// Transform locations for SearchableSelect
+const stateOptions = computed(() => {
+    return props.locations.map(state => ({
+        id: state.id,
+        name: state.name,
+        // Keep original object for easier LGA lookup
+        original: state
+    }))
+});
 
 const { isDark } = useTheme();
 
@@ -29,6 +45,29 @@ const form = useForm({
 
 const handleImageUpload = (e) => {
     form.profile_picture = e.target.files[0];
+};
+
+const lgas = ref([]);
+
+
+
+const lgaOptions = computed(() => {
+    return lgas.value.map(lga => ({
+        id: lga.id,
+        name: lga.name
+    }))
+});
+
+const onStateChange = (newStateName) => {
+    form.state_of_origin = newStateName;
+    form.lga = ''; // Reset LGA
+    
+    const selectedState = props.locations.find(state => state.name === newStateName);
+    lgas.value = selectedState ? selectedState.lgas : [];
+};
+
+const onLgaChange = (newLgaName) => {
+    form.lga = newLgaName;
 };
 
 const submit = () => {
@@ -59,32 +98,32 @@ const submit = () => {
 
                 <div class="grid md:grid-cols-2 gap-6">
                     <div class="md:col-span-2">
-                        <InputLabel value="Full Name" />
+                        <InputLabel value="Full Name" :required="true" />
                         <TextInput v-model="form.full_name" type="text" class="mt-1 block w-full" required />
                         <InputError :message="form.errors.full_name" class="mt-2" />
                     </div>
 
                     <div>
-                        <InputLabel value="Phone Number" />
+                        <InputLabel value="Phone Number" :required="true" />
                         <TextInput v-model="form.phone_number" type="tel" class="mt-1 block w-full" required />
                         <InputError :message="form.errors.phone_number" class="mt-2" />
                     </div>
 
                     <div>
-                        <InputLabel value="Date of Birth" />
+                        <InputLabel value="Date of Birth" :required="true" />
                         <TextInput v-model="form.date_of_birth" type="date" class="mt-1 block w-full" required />
                         <InputError :message="form.errors.date_of_birth" class="mt-2" />
                     </div>
 
                     <div>
-                        <InputLabel value="Gender" />
-                        <select 
+                        <InputLabel value="Gender" :required="true" />
+                        <SelectInput 
                             v-model="form.gender" 
-                            :class="['mt-1 block w-full rounded-md shadow-sm border-gray-300 focus:border-brand-500 focus:ring-brand-500', isDark ? 'bg-slate-900 border-slate-700 text-slate-300' : '']"
+                            :class="[isDark ? 'bg-slate-900 border-slate-700 text-slate-300' : '']"
                         >
                             <option value="male">Male</option>
                             <option value="female">Female</option>
-                        </select>
+                        </SelectInput>
                         <InputError :message="form.errors.gender" class="mt-2" />
                     </div>
 
@@ -104,19 +143,30 @@ const submit = () => {
 
                 <div class="grid md:grid-cols-2 gap-6">
                     <div>
-                        <InputLabel value="State of Origin" />
-                        <TextInput v-model="form.state_of_origin" type="text" class="mt-1 block w-full" required />
+                        <InputLabel value="State of Origin" :required="true" />
+                        <SearchableSelect 
+                            :modelValue="form.state_of_origin" 
+                            @update:modelValue="onStateChange"
+                            :options="stateOptions"
+                            placeholder="Select State"
+                        />
                         <InputError :message="form.errors.state_of_origin" class="mt-2" />
                     </div>
 
                     <div>
-                        <InputLabel value="LGA" />
-                        <TextInput v-model="form.lga" type="text" class="mt-1 block w-full" required />
+                        <InputLabel value="LGA" :required="true" />
+                        <SearchableSelect 
+                            :modelValue="form.lga" 
+                            @update:modelValue="onLgaChange"
+                            :options="lgaOptions"
+                            placeholder="Select LGA"
+                            :disabled="!form.state_of_origin"
+                        />
                         <InputError :message="form.errors.lga" class="mt-2" />
                     </div>
 
                     <div class="md:col-span-2">
-                        <InputLabel value="Residential Address" />
+                        <InputLabel value="Residential Address" :required="true" />
                         <TextInput v-model="form.address" type="text" class="mt-1 block w-full" required />
                         <InputError :message="form.errors.address" class="mt-2" />
                     </div>
@@ -131,7 +181,7 @@ const submit = () => {
 
                 <div class="space-y-6">
                     <div>
-                        <InputLabel value="Current School / Institution" />
+                        <InputLabel value="Current School / Institution" :required="true" />
                         <TextInput v-model="form.school_name" type="text" class="mt-1 block w-full" required />
                         <InputError :message="form.errors.school_name" class="mt-2" />
                     </div>

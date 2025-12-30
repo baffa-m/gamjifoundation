@@ -1,7 +1,7 @@
 <script setup>
 import { defineOptions, ref } from 'vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, Head } from '@inertiajs/vue3';
 import { 
     Award, Users, FileText, TrendingUp, ArrowRight, 
     CheckCircle, XCircle, Clock, MoreVertical, Filter, Download 
@@ -84,6 +84,7 @@ import { formatDistanceToNow } from 'date-fns';
 </script>
 
 <template>
+    <Head title="Admin Dashboard" />
     <div class="space-y-8">
         <!-- Header -->
         <div class="mb-8 animate-fade-in-up">

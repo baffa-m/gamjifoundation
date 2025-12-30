@@ -4,7 +4,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Card from '@/Components/UI/Card.vue';
 import Badge from '@/Components/UI/Badge.vue';
 import Button from '@/Components/UI/Button.vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, Head } from '@inertiajs/vue3';
 import { Award, FileText, CheckCircle, XCircle, Clock } from 'lucide-vue-next';
 import { useTheme } from '@/Composables/useTheme';
 
@@ -30,6 +30,7 @@ const getStatusVariant = (status) => {
 </script>
 
 <template>
+    <Head title="Applicant Dashboard" />
     <div>
         <div class="mb-8 animate-fade-in-up">
             <h1 :class="['text-4xl font-bold font-display bg-gradient-to-r bg-clip-text text-transparent', isDark ? 'from-white to-brand-200' : 'from-slate-900 to-brand-700']">My Dashboard</h1>

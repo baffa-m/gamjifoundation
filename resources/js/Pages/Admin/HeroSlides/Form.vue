@@ -64,14 +64,14 @@ const handleImageUpload = (e) => {
         </div>
 
         <!-- Form Card -->
-        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 md:p-8">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-6 md:p-8">
             <form @submit.prevent="submit" class="space-y-6">
                 
                 <!-- Image Upload -->
                 <div>
-                    <InputLabel value="Slide Image" />
+                    <InputLabel value="Slide Image" :required="!slide" />
                     <div class="mt-2 flex items-center gap-6">
-                        <div class="w-32 h-20 rounded-lg border-2 border-dashed border-slate-300 bg-slate-50 flex items-center justify-center overflow-hidden relative">
+                        <div class="w-32 h-20 rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 flex items-center justify-center overflow-hidden relative">
                             <img 
                                 v-if="slide?.image_url && !form.image" 
                                 :src="slide.image_url" 
@@ -97,7 +97,7 @@ const handleImageUpload = (e) => {
 
                 <!-- Title -->
                 <div>
-                    <InputLabel for="title" value="Title" />
+                    <InputLabel for="title" value="Title" :required="true" />
                     <TextInput
                         id="title"
                         v-model="form.title"
@@ -115,7 +115,7 @@ const handleImageUpload = (e) => {
                     <textarea
                         id="subtitle"
                         v-model="form.subtitle"
-                        class="mt-1 block w-full border-gray-300 focus:border-brand-500 focus:ring-brand-500 rounded-md shadow-sm"
+                        class="mt-1 block w-full border-gray-300 dark:border-slate-700 focus:border-brand-500 focus:ring-brand-500 rounded-md shadow-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-300"
                         rows="3"
                         placeholder="Short description..."
                     ></textarea>
@@ -159,10 +159,10 @@ const handleImageUpload = (e) => {
                 </div>
 
                 <!-- Actions -->
-                <div class="flex items-center justify-end gap-4 pt-4 border-t border-slate-100">
+                <div class="flex items-center justify-end gap-4 pt-4 border-t border-slate-100 dark:border-slate-700">
                     <Link 
                         :href="route('admin.hero-slides.index')"
-                        class="text-sm text-slate-600 hover:text-slate-900 font-medium"
+                        class="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium"
                     >
                         Cancel
                     </Link>

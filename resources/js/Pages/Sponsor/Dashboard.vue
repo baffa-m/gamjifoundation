@@ -4,7 +4,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Card from '@/Components/UI/Card.vue';
 import Badge from '@/Components/UI/Badge.vue';
 import Button from '@/Components/UI/Button.vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, Head } from '@inertiajs/vue3';
 import { Award, FileText, CheckCircle, AlertCircle } from 'lucide-vue-next';
 import { useTheme } from '@/Composables/useTheme';
 
@@ -30,6 +30,7 @@ const getVerificationVariant = (status) => {
 </script>
 
 <template>
+    <Head title="Sponsor Dashboard" />
     <div>
         <!-- Verification Alert -->
         <div

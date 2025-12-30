@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from 'vue';
-import { Link, usePage } from '@inertiajs/vue3';
+import { Link, usePage, Head } from '@inertiajs/vue3';
 import { ChevronLeft, ChevronRight, ArrowRight, Star, Shield, Zap } from 'lucide-vue-next';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import FeatureCard from '@/Components/FeatureCard.vue';
@@ -45,6 +45,7 @@ import { useTheme } from '@/Composables/useTheme';
 </script>
 
 <template>
+  <Head title="Welcome" />
   <div class="overflow-x-hidden">
     <!-- HERO SLIDER -->
     <header class="relative h-[100vh] min-h-[700px] bg-slate-900">

@@ -20,7 +20,11 @@ class ProfileController extends Controller
                 ->with('message', 'You already have an applicant profile.');
         }
 
-        return Inertia::render('Applicant/Profile/Create');
+        $locations = \App\Models\State::with('lgas')->get();
+
+        return Inertia::render('Applicant/Profile/Create', [
+            'locations' => $locations
+        ]);
     }
 
     public function store(Request $request)
