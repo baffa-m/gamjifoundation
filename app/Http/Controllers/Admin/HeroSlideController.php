@@ -25,8 +25,8 @@ class HeroSlideController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'subtitle' => 'required|string',
+            'title' => 'nullable|string|max:255',
+            'subtitle' => 'nullable|string',
             'image' => 'required|image|max:2048',
             'cta_text' => 'nullable|string|max:50',
             'cta_link' => 'nullable|string|max:255',
@@ -58,8 +58,8 @@ class HeroSlideController extends Controller
     public function update(Request $request, HeroSlide $heroSlide)
     {
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'subtitle' => 'required|string',
+            'title' => 'nullable|string|max:255',
+            'subtitle' => 'nullable|string',
             'image' => 'nullable|image|max:2048',
             'cta_text' => 'nullable|string|max:50',
             'cta_link' => 'nullable|string|max:255',

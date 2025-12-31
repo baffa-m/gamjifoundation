@@ -77,11 +77,11 @@ import { useTheme } from '@/Composables/useTheme';
               Excellence in Education
             </div>
             
-            <h1 class="text-5xl md:text-7xl lg:text-8xl font-bold font-display text-white leading-tight tracking-tight drop-shadow-xl">
+            <h1 v-if="slide.title" class="text-5xl md:text-7xl lg:text-8xl font-bold font-display text-white leading-tight tracking-tight drop-shadow-xl">
               {{ slide.title }}
             </h1>
             
-            <p class="text-xl md:text-2xl text-slate-200 font-light max-w-2xl leading-relaxed opacity-90 drop-shadow-md">
+            <p v-if="slide.subtitle" class="text-xl md:text-2xl text-slate-200 font-light max-w-2xl leading-relaxed opacity-90 drop-shadow-md">
               {{ slide.subtitle }}
             </p>
             

@@ -97,14 +97,13 @@ const handleImageUpload = (e) => {
 
                 <!-- Title -->
                 <div>
-                    <InputLabel for="title" value="Title" :required="true" />
+                    <InputLabel for="title" value="Title" />
                     <TextInput
                         id="title"
                         v-model="form.title"
                         type="text"
                         class="mt-1 block w-full"
                         placeholder="e.g., Empowering Future Leaders"
-                        required
                     />
                     <InputError :message="form.errors.title" class="mt-2" />
                 </div>
