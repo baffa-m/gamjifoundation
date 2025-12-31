@@ -72,7 +72,7 @@ import { useTheme } from '@/Composables/useTheme';
         <!-- Content -->
         <div class="relative h-full container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-center">
           <div class="max-w-4xl space-y-8 pl-4 md:pl-8 border-l-4 border-brand-500 animate-fade-in-up">
-            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-brand-300 text-sm font-semibold tracking-wider uppercase mb-2 shadow-sm">
+            <div v-if="slide.title" class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-brand-300 text-sm font-semibold tracking-wider uppercase mb-2 shadow-sm">
               <Star class="w-4 h-4 fill-current" />
               Excellence in Education
             </div>
@@ -95,6 +95,7 @@ import { useTheme } from '@/Composables/useTheme';
                 <ArrowRight class="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
               <Link 
+                v-if="slide.title"
                 href="/partner"
                 class="px-8 py-4 bg-white/5 backdrop-blur-md text-white border border-white/20 rounded-xl font-semibold hover:bg-white/10 transition-all hover:-translate-y-1"
               >
