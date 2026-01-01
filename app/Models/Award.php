@@ -31,6 +31,7 @@ class Award extends Model
 
     protected $casts = [
         'eligibility_criteria' => 'array',
+        'required_documents' => 'array',
         'application_start_date' => 'date',
         'application_end_date' => 'date',
         'announcement_date' => 'date',
@@ -69,5 +70,10 @@ class Award extends Model
         return $this->application_start_date <= $now 
             && $this->application_end_date >= $now 
             && $this->status === 'active';
+    }
+
+    public function isActive()
+    {
+        return $this->status === 'active';
     }
 }

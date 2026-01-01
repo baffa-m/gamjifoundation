@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\{WelcomeController, ProfileController, NewsController};
+use App\Http\Controllers\{WelcomeController, ProfileController, NewsController, AwardController};
 use App\Http\Controllers\Admin;
 use App\Http\Controllers\Applicant;
 use App\Http\Controllers\Sponsor;
@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\Route;
 
 // Public routes
 Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
+
+// Public Award Routes
+Route::get('/awards', [AwardController::class, 'index'])->name('awards.index');
+Route::get('/awards/{award}', [AwardController::class, 'show'])->name('awards.show');
 
 // Public News routes
 Route::get('/news', [NewsController::class, 'index'])->name('news.index');

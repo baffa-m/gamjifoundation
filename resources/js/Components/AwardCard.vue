@@ -9,6 +9,13 @@ defineProps({
   },
   isDark: Boolean
 });
+const formatAmount = (amount) => {
+  return new Intl.NumberFormat('en-NG', { 
+    style: 'currency', 
+    currency: 'NGN',
+    maximumFractionDigits: 0
+  }).format(amount);
+};
 </script>
 
 <template>
@@ -43,7 +50,7 @@ defineProps({
         <div>
           <span class="block text-xs text-slate-500 uppercase tracking-wider">Value</span>
           <span :class="['font-bold text-lg font-display', isDark ? 'text-accent-400' : 'text-brand-700']">
-            {{ award.amount }}
+            {{ formatAmount(award.amount) }}
           </span>
         </div>
         <div class="w-10 h-10 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center group-hover:bg-brand-600 group-hover:border-brand-600 group-hover:text-white transition-all duration-300 shadow-sm">
