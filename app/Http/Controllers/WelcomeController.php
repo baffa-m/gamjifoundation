@@ -57,7 +57,7 @@ class WelcomeController extends Controller
                         'slug' => $award->slug,
                         'title' => $award->title,
                         'sponsor' => $award->sponsor->organization_name ?? 'N/A',
-                        'amount' => '₦' . number_format($award->amount, 2),
+                        'amount' => $award->amount,
                         'deadline' => optional($award->application_end_date)->format('M d'),
                         'type' => ucfirst($award->category)
                     ];
