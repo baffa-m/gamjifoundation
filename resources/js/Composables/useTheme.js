@@ -8,7 +8,8 @@ if (typeof window !== 'undefined') {
   if (stored) {
     isDark.value = stored === 'dark';
   } else {
-    isDark.value = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    // Default to light regardless of system preference
+    isDark.value = false;
   }
 
   // Apply initial state
