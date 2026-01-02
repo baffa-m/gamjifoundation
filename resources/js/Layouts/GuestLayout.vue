@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from 'vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
 import { Sun, Moon, Menu, X, Facebook, Twitter, Instagram, Linkedin, Mail, Phone, MapPin } from 'lucide-vue-next';
 import { useTheme } from '@/Composables/useTheme';
 import logo from '@/../images/logo.jpeg'; 
@@ -8,6 +8,22 @@ import logo from '@/../images/logo.jpeg';
 const { isDark, toggleTheme } = useTheme();
 const scrollY = ref(0);
 const mobileMenuOpen = ref(false);
+const page = usePage();
+
+const dashboardRoute = computed(() => {
+    const user = page.props.auth.user;
+    if (!user) return '/login';
+    const roles = user.roles || [];
+    
+    // Check roles using window.route as fallback if route helper isn't globally available in script
+    const r = window.route;
+    
+    if (roles.includes('admin')) return r('admin.dashboard');
+    if (roles.includes('applicant')) return r('applicant.dashboard');
+    if (roles.includes('sponsor')) return r('sponsor.dashboard');
+    
+    return '/dashboard';
+});
 
 const navItems = ['Features', 'Awards', 'About'];
 
@@ -111,7 +127,7 @@ const navClasses = computed(() => {
             
             <template v-if="$page.props.auth.user">
                 <Link 
-                  href="/dashboard"
+                  :href="dashboardRoute"
                   :class="[
                     'px-5 py-2 rounded-lg text-sm font-semibold transition-all', 
                     isDark ? 'text-slate-200 hover:bg-slate-800' : 'text-slate-700 hover:bg-slate-100'
@@ -196,7 +212,7 @@ const navClasses = computed(() => {
           <div class="grid grid-cols-2 gap-4 mt-4">
             <template v-if="$page.props.auth.user">
                 <Link 
-                  href="/dashboard"
+                  :href="dashboardRoute"
                   :class="[
                     'col-span-2 block w-full py-3 rounded-lg text-center font-semibold border',
                     isDark ? 'border-slate-700 text-slate-200' : 'border-slate-200 text-slate-700'
